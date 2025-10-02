@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindCare AI — Bienestar Mental con IA</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">
+      <div class="logo">🌿</div>
+      <span>MindCare <strong>AI</strong></span>
+    </div>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#agenda">Agenda</a>
+      <a href="#sobre">Sobre Nosotros</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="btn btn-outline" id="loginBtn">Iniciar Sesión</button>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="inicio" class="hero">
+      <div class="hero-copy">
+        <h1>Tu Espacio Seguro para el Bienestar Mental</h1>
+        <p>Inteligencia Artificial empática a tu disposición. Recibe apoyo inicial y recursos 24/7, y programa una cita con profesionales humanos.</p>
+        <div class="cta">
+          <a class="btn" href="#servicios">Comenzar Ahora</a>
+          <button class="btn btn-ghost" id="openChat">Hablar con la IA</button>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orb"></div>
+      </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="section">
+      <h2>Servicios</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Terapia Asistida por IA</h3>
+          <p>Obtén apoyo personalizado y herramientas para tu salud mental.</p>
+          <button class="link" data-msg="Quiero comenzar un chequeo rápido de ánimo.">Probar ahora →</button>
+        </article>
+        <article class="card">
+          <h3>Recursos y Ejercicios</h3>
+          <p>Accede a meditaciones, respiración guiada y ejercicios cognitivos.</p>
+          <button class="link" data-msg="Recomiéndame un ejercicio breve de respiración.">Ver recursos →</button>
+        </article>
+        <article class="card">
+          <h3>Artículos y Guías</h3>
+          <p>Explora lecturas prácticas para tu bienestar diario.</p>
+          <button class="link" data-msg="Dame una guía corta para manejar el estrés hoy.">Explorar →</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- Agenda -->
+    <section id="agenda" class="section">
+      <h2>Agenda tu Sesión</h2>
+      <div class="agenda-wrap">
+        <div class="calendar">
+          <div class="calendar-header">Diciembre 2025</div>
+          <div class="calendar-grid">
+            <!-- Mini calendario ilustrativo -->
+            <div class="day">1</div>
+<div class="day">2</div>
+<div class="day">3</div>
+<div class="day">4</div>
+<div class="day">5</div>
+<div class="day">6</div>
+<div class="day">7</div>
+<div class="day">8</div>
+<div class="day active">9</div>
+<div class="day">10</div>
+<div class="day">11</div>
+<div class="day">12</div>
+<div class="day active">13</div>
+<div class="day">14</div>
+<div class="day">15</div>
+<div class="day">16</div>
+<div class="day">17</div>
+<div class="day">18</div>
+<div class="day">19</div>
+<div class="day active">20</div>
+<div class="day active">21</div>
+<div class="day">22</div>
+<div class="day">23</div>
+<div class="day">24</div>
+<div class="day">25</div>
+<div class="day">26</div>
+<div class="day">27</div>
+<div class="day">28</div>
+<div class="day">29</div>
+<div class="day">30</div>
+<div class="day">31</div>
+          </div>
+        </div>
+        <div class="slots">
+          <div class="slots-title">Horas disponibles</div>
+          <div class="slot-list">
+            <button class="slot">10:00 AM</button>
+            <button class="slot">11:00 AM</button>
+            <button class="slot">2:00 PM</button>
+            <button class="slot selected">3:00 PM</button>
+          </div>
+          <button class="btn wide">Confirmar cita</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre -->
+    <section id="sobre" class="section">
+      <h2>Sobre Nosotros</h2>
+      <p>Combinamos IA responsable con psicólogos certificados para ofrecer orientación accesible. La IA no sustituye el tratamiento profesional: si estás en crisis, contacta a los servicios de emergencia de tu país.</p>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="section">
+      <h2>Contacto</h2>
+      <p>Escríbenos a <a href="mailto:hola@mindcare.example">hola@mindcare.example</a></p>
+    </section>
+  </main>
+
+  <!-- Chat Widget -->
+  <div id="chat-widget" class="chat hidden" role="dialog" aria-label="Chat de apoyo con IA">
+    <div class="chat-header">
+      <div class="chat-title">MindCare Asistente</div>
+      <button class="close" id="closeChat" aria-label="Cerrar chat">✕</button>
+    </div>
+    <div id="messages" class="chat-body" aria-live="polite"></div>
+    <form id="chat-form" class="chat-input" autocomplete="off">
+      <input id="user-input" type="text" placeholder="Escribe tu mensaje..." required />
+      <button class="btn" type="submit">Enviar</button>
+    </form>
+    <div class="disclaimer">
+      <small>La IA ofrece apoyo informativo y no reemplaza atención profesional. Si corres riesgo inminente, llama a emergencias.</small>
+    </div>
+  </div>
+
+  <script src="./chat.js"></script>
+</body>
+</html>

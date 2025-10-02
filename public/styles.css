@@ -1,0 +1,61 @@
+/* MindCare AI Styles */
+:root{
+  --bg:#0b1220; --card:#0f172a; --muted:#94a3b8; --fg:#e2e8f0; --accent:#22d3ee; --accent-2:#34d399;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0b1220 60%,#0e1930);color:var(--fg)}
+a{color:var(--accent)}
+.nav{position:sticky;top:0;display:flex;gap:24px;align-items:center;justify-content:space-between;padding:14px 24px;background:#0b1220a6;backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid #1f2937}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700}
+.logo{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.nav a{margin:0 8px;color:var(--fg);text-decoration:none;opacity:0.8}
+.nav a:hover{opacity:1}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:#0b1220;padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px #22d3ee22}
+.btn:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid #334155;color:var(--fg)}
+.btn-outline{background:transparent;border:1px solid #334155;color:var(--fg)}
+.btn.wide{width:100%}
+main{max-width:1100px;margin:0 auto;padding:24px}
+.hero{display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;padding:56px 0;align-items:center}
+.hero h1{font-size:42px;line-height:1.1;margin:0 0 8px}
+.hero p{color:var(--muted)}
+.cta{display:flex;gap:12px;margin-top:16px}
+.hero-art{position:relative;height:280px;background:radial-gradient(120px 100px at 70% 40%,#22d3ee44,transparent),radial-gradient(160px 120px at 40% 60%,#34d39933,transparent);border-radius:24px;border:1px solid #1e293b}
+.orb{position:absolute;inset:30% 30% auto auto;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff, #a7f3d099,#22d3ee66,#0000 60%);box-shadow:0 0 80px #22d3ee55 inset}
+.section{margin:40px 0}
+.section h2{margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:18px;box-shadow:0 10px 30px #00000022}
+.card h3{margin:6px 0 8px}
+.card p{color:var(--muted);margin:0 0 10px}
+.link{background:transparent;border:none;color:var(--accent);font-weight:600;cursor:pointer}
+.agenda-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.calendar{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:12px}
+.calendar-header{font-weight:700;margin-bottom:8px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.day{padding:10px;border-radius:10px;background:#0b1220;border:1px solid #1f2937;text-align:center;color:#94a3b8}
+.day.active{background:#0b1220;outline:2px solid #22d3ee55;color:#e2e8f0}
+.slots{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.slots-title{font-weight:700}
+.slot{padding:10px 12px;border-radius:10px;background:#0b1220;border:1px solid #1f2937;color:#e2e8f0;cursor:pointer}
+.slot.selected, .slot:hover{outline:2px solid #22d3ee55}
+/* Chat widget */
+.chat{position:fixed;right:20px;bottom:20px;width:360px;max-height:70vh;background:var(--card);border:1px solid #1f2937;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px #00000055}
+.chat.hidden{display:none}
+.chat-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #1f2937}
+.chat-title{font-weight:700}
+.close{background:transparent;border:none;font-size:18px;color:var(--fg);cursor:pointer}
+.chat-body{padding:12px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px}
+.msg .bubble{padding:10px 12px;border-radius:12px;border:1px solid #1f2937;background:#0b1220;max-width:85%}
+.msg.user{justify-content:flex-end}
+.msg.user .bubble{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#0b1220;border-color:transparent}
+.msg.ai .bubble{color:#e2e8f0}
+.chat-input{display:flex;gap:8px;padding:10px;border-top:1px solid #1f2937}
+.chat-input input{flex:1;padding:10px;border-radius:10px;border:1px solid #334155;background:#0b1220;color:#e2e8f0}
+.disclaimer{padding:6px 10px;border-top:1px solid #1f2937;color:#94a3b8}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .agenda-wrap{grid-template-columns:1fr}
+  .chat{width:min(94vw,420px)}
+}
