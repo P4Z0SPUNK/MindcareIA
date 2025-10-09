@@ -12,19 +12,32 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Decide proveedor (OpenAI oficial o Azure Foundry) y crea cliente
+const AZURE_ENDPOINT = process.env.AZURE_ENDPOINT;
+const AZURE_API_KEY = process.env.AZURE_API_KEY;
+const AZURE_DEPLOYMENT = process.env.AZURE_DEPLOYMENT;
 
-// Sanity check de variables de entorno
-if (!process.env.OPENAI_API_KEY) {
-  console.warn('[MindCare] FALTA OPENAI_API_KEY en .env');
+let openai;
+if (AZURE_ENDPOINT && AZURE_API_KEY) {
+  // Aseguramos que baseURL termine en '/'
+  const base = AZURE_ENDPOINT.endsWith('/') ? AZURE_ENDPOINT : AZURE_ENDPOINT + '/';
+  openai = new OpenAI({ baseURL: base, apiKey: AZURE_API_KEY });
+  console.log('[MindCare] Configurado para usar Azure Foundry (endpoint):', base);
+  if (!AZURE_DEPLOYMENT) console.warn('[MindCare] AZURE_DEPLOYMENT no está definido en .env');
+} else {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+  openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+  if (!OPENAI_API_KEY) console.warn('[MindCare] FALTA OPENAI_API_KEY en .env y no se detectó Azure.');
+  else console.log('[MindCare] Configurado para usar OpenAI oficial.');
 }
 
 // Health endpoint opcional
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
-    hasKey: !!process.env.OPENAI_API_KEY,
-    model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+    provider: AZURE_API_KEY && AZURE_ENDPOINT ? 'azure' : 'openai',
+    hasKey: !!(process.env.OPENAI_API_KEY || (AZURE_API_KEY && AZURE_ENDPOINT)),
+    model: AZURE_DEPLOYMENT || process.env.OPENAI_MODEL || 'gpt-4o-mini',
   });
 });
 
@@ -45,10 +58,11 @@ async function isFlaggedByModeration(_text) {
 
 app.post('/api/chat', async (req, res) => {
   try {
-    // Validación básica antes de llamar a OpenAI
-    if (!process.env.OPENAI_API_KEY) {
+    // Note: authentication is enforced client-side as a flag (frontend must require sign-in)
+    // Validación básica antes de llamar al servicio (OpenAI o Azure)
+    if (!process.env.OPENAI_API_KEY && !(AZURE_API_KEY && AZURE_ENDPOINT && AZURE_DEPLOYMENT)) {
       res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-      res.write(`data: ${JSON.stringify({ delta: 'Config error: falta OPENAI_API_KEY en el servidor.' })}\n\n`);
+      res.write(`data: ${JSON.stringify({ delta: 'Config error: falta credenciales de OpenAI o Azure en el servidor.' })}\n\n`);
       res.write('data: [DONE]\n\n');
       return res.end();
     }
@@ -78,8 +92,11 @@ app.post('/api/chat', async (req, res) => {
     ];
 
     try {
+      // El field "model" para Azure debe recibir el nombre del deployment
+      const model = AZURE_DEPLOYMENT || process.env.OPENAI_MODEL || 'gpt-4o-mini';
+
       const stream = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        model,
         messages,
         stream: true,
         temperature: 0.7,
@@ -96,7 +113,7 @@ app.post('/api/chat', async (req, res) => {
       // Log detallado
       const status = apiErr?.status || apiErr?.code || 'unknown';
       const msg = apiErr?.message || apiErr?.error?.message || 'unknown';
-      console.error('[MindCare] OpenAI error:', status, msg);
+  console.error('[MindCare] API error:', status, msg);
 
       // Mensaje de error entendible para el usuario
       let hint = 'Problema con el servicio.';
@@ -115,6 +132,87 @@ app.post('/api/chat', async (req, res) => {
     res.write(`data: ${JSON.stringify({ delta: 'Ocurrió un error inesperado en el servidor.' })}\n\n`);
     res.write('data: [DONE]\n\n');
     res.end();
+  }
+});
+
+// Endpoint para buscar centros cercanos (proxy a Overpass API de OpenStreetMap)
+app.get('/api/nearby', async (req, res) => {
+  try {
+    const lat = parseFloat(req.query.lat);
+    const lon = parseFloat(req.query.lon);
+    const radius = parseInt(req.query.radius, 10) || 5000; // metros
+
+    if (!lat || !lon) return res.status(400).json({ error: 'Missing lat/lon' });
+
+    // Overpass QL: buscamos centros relacionados con salud y filtramos por keywords relevantes a salud mental
+    const query = `[
+      out:json][timeout:25];(
+        node(around:${radius},${lat},${lon})["amenity"~"clinic|hospital|doctors|social_facility|healthcare"];
+        way(around:${radius},${lat},${lon})["amenity"~"clinic|hospital|doctors|social_facility|healthcare"];
+        relation(around:${radius},${lat},${lon})["amenity"~"clinic|hospital|doctors|social_facility|healthcare"];
+      );out center tags;`;
+
+    const overpassUrl = 'https://overpass-api.de/api/interpreter';
+    const response = await fetch(overpassUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `data=${encodeURIComponent(query)}`,
+    });
+
+    if (!response.ok) {
+      const txt = await response.text().catch(() => '');
+      return res.status(502).json({ error: 'Overpass error', detail: txt });
+    }
+
+    const json = await response.json();
+    const elements = json.elements || [];
+
+    // Simplify results
+    // Simplify and filter by mental-health related keywords (in name or tags)
+    function haversineDistance(lat1, lon1, lat2, lon2) {
+      const toRad = (v) => (v * Math.PI) / 180;
+      const R = 6371000; // meters
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    const keywords = ['mental', 'psy', 'psic', 'counsel', 'salud mental', 'psiquiatr', 'psicolog'];
+
+    const rawPlaces = elements.map(el => {
+      const tags = el.tags || {};
+      const name = tags.name || '';
+      const address = [tags['addr:street'], tags['addr:housenumber'], tags['addr:city']].filter(Boolean).join(', ');
+      const phone = tags.phone || tags['contact:phone'] || tags['telephone'] || null;
+      const opening = tags.opening_hours || null;
+      const plat = el.lat || el.center?.lat;
+      const plon = el.lon || el.center?.lon;
+      const text = (name + ' ' + (tags.amenity||'') + ' ' + (tags.healthcare||'') + ' ' + (tags.servicetype||'') + ' ' + (tags['description']||'')).toLowerCase();
+      const containsKeyword = keywords.some(k => text.includes(k));
+      return { id: el.id, name, address, phone, opening, lat: plat, lon: plon, text, containsKeyword };
+    }).filter(p => p.name && p.lat && p.lon && p.containsKeyword);
+
+    // Deduplicate by name+address
+    const seen = new Map();
+    const dedup = [];
+    for (const p of rawPlaces) {
+      const key = `${p.name}||${p.address}`;
+      if (!seen.has(key)) {
+        seen.set(key, true);
+        p.distance = haversineDistance(lat, lon, p.lat, p.lon);
+        dedup.push(p);
+      }
+    }
+
+    // Sort by distance
+    dedup.sort((a,b) => a.distance - b.distance);
+
+    res.json(dedup);
+  } catch (err) {
+    console.error('Nearby error', err);
+    res.status(500).json({ error: 'internal' });
   }
 });
 

@@ -1,4 +1,4 @@
-// public/chat.js
+// public/js/chat.js
 
 // ====== SELECTORES BÁSICOS ======
 const widget = document.getElementById('chat-widget');
@@ -60,6 +60,33 @@ quickLinks.forEach(btn => {
   });
 });
 
+import { getIdToken, onAuthChange, signInWithGoogle, signOutUser } from './firebase-client.js';
+
+// Disable chat UI if not authenticated
+let isAuthed = false;
+onAuthChange(user => {
+  isAuthed = !!user;
+  // show sign-in button if not authed
+  const signInBtn = document.getElementById('sign-in-btn');
+  if (signInBtn) signInBtn.style.display = isAuthed ? 'none' : 'inline-block';
+  const signOutBtn = document.getElementById('sign-out-btn');
+  if (signOutBtn) signOutBtn.style.display = isAuthed ? 'inline-block' : 'none';
+  const chatControls = document.getElementById('chat-controls');
+  if (chatControls) chatControls.style.display = isAuthed ? 'block' : 'none';
+});
+
+// Sign-in button handler (if present)
+const signInBtn = document.getElementById('sign-in-btn');
+if (signInBtn) signInBtn.addEventListener('click', async () => {
+  await signInWithGoogle();
+});
+
+// Sign-out button handler
+const signOutBtn = document.getElementById('sign-out-btn');
+if (signOutBtn) signOutBtn.addEventListener('click', async () => {
+  await signOutUser();
+});
+
 // ====== LÓGICA DE CHAT CON STREAMING ======
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -76,6 +103,12 @@ form.addEventListener('submit', async (e) => {
   history.push({ role: 'user', content: text });
 
   try {
+    if (!isAuthed) {
+      botBubble.textContent = 'Necesitas iniciar sesión para usar el chatbot.';
+      return;
+    }
+
+    // Authentication is a client-side flag only; we do not send ID tokens to the server.
     const resp = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
