@@ -28,6 +28,12 @@ main{max-width:1100px;margin:0 auto;padding:24px}
 .card{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:18px;box-shadow:0 10px 30px #00000022}
 .card h3{margin:6px 0 8px}
 .card p{color:var(--muted);margin:0 0 10px}
+.center-meta{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.center-distance{background:#0b1220;padding:6px 10px;border-radius:999px;border:1px solid #21313a;color:var(--accent);font-weight:700}
+.center-hours{margin-top:8px;color:var(--muted);font-size:0.95em}
+.center-actions{margin-top:12px}
+.phone-btn{background:linear-gradient(135deg,#34d399,#22d3ee);color:#042017;padding:8px 12px;border-radius:12px;display:inline-block}
+.muted{color:var(--muted)}
 .link{background:transparent;border:none;color:var(--accent);font-weight:600;cursor:pointer}
 .agenda-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .calendar{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:12px}
