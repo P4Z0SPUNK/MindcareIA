@@ -89,7 +89,7 @@ Estructura del proyecto (actualizada)
 
 Licencia y atribución
 
-Este repositorio incluye una licencia con cláusula de atribución educativa. Consulta `LICENSE.md`.
+Este repositorio incluye una licencia con cláusula CC BY de Creative Commons. Consulta `LICENSE.md`.
 
 Auteurs / Autores
 
