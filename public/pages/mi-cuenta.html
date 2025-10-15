@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi Cuenta — MindCare AI</title>
+  <link rel="stylesheet" href="/css/pages/mi-cuenta.css" />
+</head>
+<body>
+  <!-- Header incluido dinámicamente -->
+  <script type="module" src="/js/include-header.js"></script>
+
+  <main>
+    <section id="mi-cuenta" class="section">
+      <h1>Mi Cuenta</h1>
+      <div id="user-info" class="card">
+        <!-- Rellenado por account.js -->
+        <p class="muted">No has iniciado sesión.</p>
+      </div>
+      <!-- Botones de sesión colocados fuera del contenedor para simplificar el layout -->
+      <!-- Si no hay sesión, mostraremos iniciar sesión -->
+      <button id="sign-in-local" class="btn btn-primary" style="display:none; margin-top:12px">Iniciar sesión</button>
+      <!-- Si hay sesión, mostramos cerrar sesión -->
+      <button id="sign-out-local" class="btn btn-outline" style="display:none; margin-top:12px">Cerrar sesión</button>
+    </section>
+
+    <!-- Mi Actividad opcional -->
+    <section id="mi-actividad" class="section" style="display:none">
+      <h2>Mi Actividad</h2>
+      <div id="activity-list" class="grid">
+        <p class="muted">Aún no hay actividad.</p>
+      </div>
+    </section>
+
+    <!-- Botones de sesión colocados debajo de Mi Actividad -->
+    <div class="section" id="session-controls" style="margin-top:12px">
+      <button id="sign-in-local" class="btn btn-primary" style="display:none">Iniciar sesión</button>
+      <button id="sign-out-local" class="btn btn-outline" style="display:none; margin-left:8px">Cerrar sesión</button>
+    </div>
+  </main>
+
+  <script type="module" src="/js/include-header.js"></script>
+  <script type="module" src="/js/account.js"></script>
+  <script type="module" src="/js/auth-ui.js"></script>
+</body>
+</html>

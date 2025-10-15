@@ -65,3 +65,34 @@ main{max-width:1100px;margin:0 auto;padding:24px}
   .agenda-wrap{grid-template-columns:1fr}
   .chat{width:min(94vw,420px)}
 }
+
+/* Hamburger / responsive nav */
+.hamburger{display:none;background:transparent;border:none;padding:8px;cursor:pointer}
+.hamburger .hamburger-box{display:inline-block;position:relative;width:24px;height:18px}
+.hamburger .hamburger-inner{position:absolute;top:50%;left:0;right:0;height:2px;background:var(--fg);transform:translateY(-50%);transition:all .25s}
+.hamburger .hamburger-inner::before,
+.hamburger .hamburger-inner::after{
+  content:'';position:absolute;left:0;right:0;height:2px;background:var(--fg);transition:all .25s
+}
+.hamburger .hamburger-inner::before{transform:translateY(-8px)}
+.hamburger .hamburger-inner::after{transform:translateY(8px)}
+.hamburger.is-active .hamburger-inner{background:transparent}
+.hamburger.is-active .hamburger-inner::before{transform:rotate(45deg)}
+.hamburger.is-active .hamburger-inner::after{transform:rotate(-45deg)}
+.nav-links{display:flex;gap:12px;align-items:center}
+.auth-actions{display:flex;gap:8px;align-items:center}
+
+@media (max-width:700px){
+  .hamburger{display:inline-block}
+  .nav-links{position:fixed;top:64px;right:12px;background:var(--card);border:1px solid #1f2937;padding:12px;border-radius:12px;flex-direction:column;gap:8px;display:none;min-width:180px;z-index:999}
+  .nav-links.open{display:flex}
+  /* Colocar el header relativo para ubicar el botón hamburguesa en la izquierda */
+  .nav{padding:12px;position:relative}
+  /* Ubicar el hamburguesa a la derecha y centrar verticalmente */
+  .hamburger{position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:1000}
+  /* Ajuste: remover margen izquierdo añadido previamente */
+  .brand{gap:10px;margin-left:0}
+  /* mostrar acciones de auth dentro del panel nav en móvil */
+  .auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  body.nav-open{overflow:hidden}
+}
