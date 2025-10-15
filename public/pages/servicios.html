@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Servicios — MindCare AI</title>
+  <link rel="stylesheet" href="/css/pages/servicios.css" />
+</head>
+<body>
+  <!-- Header incluido dinámicamente -->
+  <script type="module" src="/js/include-header.js"></script>
+
+  <main>
+    <section class="section">
+      <h1>Servicios</h1>
+      <p>Encuentra aquí los servicios principales: Chatbot de apoyo y Centros de ayuda cercanos.</p>
+
+      <div class="grid">
+        <article class="card">
+          <h3>Chatbot de apoyo</h3>
+          <p>Habla con nuestro asistente IA. Necesitas iniciar sesión para usarlo.</p>
+          <button class="btn" id="openChat">Abrir Chat</button>
+        </article>
+
+        <article class="card">
+          <h3>Centros de ayuda cercanos</h3>
+          <p>Permite el acceso a tu ubicación para mostrar centros y contactos útiles cerca de ti.</p>
+          <div class="centros-actions">
+            <button id="find-centers" class="btn">Buscar centros cercanos</button>
+            <select id="radius-select">
+              <option value="2000">2 km</option>
+              <option value="5000" selected>5 km</option>
+              <option value="10000">10 km</option>
+            </select>
+          </div>
+          <div id="centers-list" class="grid"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="chat-widget" class="chat hidden" role="dialog" aria-label="Chat de apoyo con IA">
+    <div class="chat-header">
+      <div class="chat-title">MindCare Asistente</div>
+      <button class="close" id="closeChat" aria-label="Cerrar chat">✕</button>
+    </div>
+    <div id="messages" class="chat-body" aria-live="polite"></div>
+    <form id="chat-form" class="chat-input" autocomplete="off">
+      <input id="user-input" type="text" placeholder="Escribe tu mensaje..." required />
+      <button class="btn" type="submit">Enviar</button>
+    </form>
+    <div class="disclaimer"><small>La IA ofrece apoyo informativo y no reemplaza atención profesional. Si corres riesgo, llama a emergencias.</small></div>
+  </div>
+
+  <script type="module" src="/js/chat.js"></script>
+  <script type="module" src="/js/nearby.js"></script>
+  <script type="module" src="/js/auth-ui.js"></script>
+</body>
+</html>
